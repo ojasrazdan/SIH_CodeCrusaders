@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Brain, ArrowLeft, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAccessibility } from "../hooks/AccessibilityContext";
 
 const PHQ9_QUESTIONS = [
   "Little interest or pleasure in doing things",
@@ -37,14 +38,22 @@ const RESPONSE_OPTIONS = [
 ];
 
 const Assessment = () => {
+  const { ttsEnabled, speakText, highContrast, adhdMode } = useAccessibility();
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const [currentQuiz, setCurrentQuiz] = useState<"select" | "phq9" | "gad7">("select");
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [responses, setResponses] = useState<Record<number, string>>({});
   const { toast } = useToast();
 
-  const getCurrentQuestions = () => {
-    return currentQuiz === "phq9" ? PHQ9_QUESTIONS : GAD7_QUESTIONS;
-  };
+  // Speak content when page or question changes
+  useEffect(() => {
+    if (ttsEnabled && containerRef.current) {
+      speakText(containerRef.current.textContent || "");
+    }
+  }, [ttsEnabled, currentQuiz, currentQuestion, speakText]);
+
+  const getCurrentQuestions = () => currentQuiz === "phq9" ? PHQ9_QUESTIONS : GAD7_QUESTIONS;
 
   const handleResponse = (value: string) => {
     setResponses(prev => ({ ...prev, [currentQuestion]: value }));
@@ -60,9 +69,7 @@ const Assessment = () => {
   };
 
   const handlePrevious = () => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion(prev => prev - 1);
-    }
+    if (currentQuestion > 0) setCurrentQuestion(prev => prev - 1);
   };
 
   const calculateResults = () => {
@@ -71,7 +78,7 @@ const Assessment = () => {
     
     let severity = "";
     let recommendations = "";
-    
+
     if (currentQuiz === "phq9") {
       if (total <= 4) {
         severity = "Minimal";
@@ -111,7 +118,6 @@ const Assessment = () => {
       duration: 8000,
     });
 
-    // Show results with action buttons
     setTimeout(() => {
       toast({
         title: "Next Steps",
@@ -136,7 +142,6 @@ const Assessment = () => {
       });
     }, 2000);
 
-    // Reset for another assessment
     setCurrentQuiz("select");
     setCurrentQuestion(0);
     setResponses({});
@@ -146,13 +151,15 @@ const Assessment = () => {
     ? ((currentQuestion + 1) / getCurrentQuestions().length) * 100 
     : 0;
 
+  const containerClasses = `min-h-screen p-4 ${highContrast ? "bg-black text-white" : "bg-gradient-soft text-foreground"} ${adhdMode ? "text-lg font-sans" : ""}`;
+
   if (currentQuiz === "select") {
     return (
-      <div className="min-h-screen bg-gradient-soft p-4">
+      <div ref={containerRef} className={containerClasses}>
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-8">
             <Brain className="mx-auto h-16 w-16 text-primary mb-4" />
-            <h1 className="text-3xl font-bold text-foreground mb-2">Mental Health Assessment</h1>
+            <h1 className="text-3xl font-bold mb-2">Mental Health Assessment</h1>
             <p className="text-muted-foreground">
               Take a confidential assessment to better understand your mental health
             </p>
@@ -210,7 +217,7 @@ const Assessment = () => {
   const currentQuestionText = questions[currentQuestion];
 
   return (
-    <div className="min-h-screen bg-gradient-soft p-4">
+    <div ref={containerRef} className={containerClasses}>
       <div className="container mx-auto max-w-2xl">
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">

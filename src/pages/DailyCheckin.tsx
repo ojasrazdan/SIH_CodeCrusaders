@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -6,6 +6,7 @@ import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Heart, Droplets, Smile, Frown, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAccessibility } from "../hooks/AccessibilityContext";
 
 const MOOD_LABELS = ["Very Low", "Low", "Okay", "Good", "Great"];
 const ENERGY_LABELS = ["Exhausted", "Tired", "Moderate", "Energetic", "Very Energetic"];
@@ -24,6 +25,9 @@ const QUICK_ACTIVITIES = [
 ];
 
 const DailyCheckin = () => {
+  const { ttsEnabled, speakText, highContrast, adhdMode } = useAccessibility();
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const [checkinData, setCheckinData] = useState({
     mood: [3],
     energy: [3],
@@ -36,6 +40,13 @@ const DailyCheckin = () => {
   });
 
   const { toast } = useToast();
+
+  // Speak content when any relevant state changes
+  useEffect(() => {
+    if (ttsEnabled && containerRef.current) {
+      speakText(containerRef.current.textContent || "");
+    }
+  }, [ttsEnabled, checkinData, speakText]);
 
   const handleActivityToggle = (activity: string) => {
     setCheckinData(prev => ({
@@ -79,8 +90,10 @@ const DailyCheckin = () => {
     return "text-secondary";
   };
 
+  const containerClasses = `min-h-screen p-4 ${highContrast ? "bg-black text-white" : "bg-gradient-soft text-foreground"} ${adhdMode ? "text-lg font-sans" : ""}`;
+
   return (
-    <div className="min-h-screen bg-gradient-soft p-4">
+    <div ref={containerRef} className={containerClasses}>
       <div className="container mx-auto max-w-4xl">
         <div className="text-center mb-8">
           <Calendar className="mx-auto h-12 w-12 text-primary mb-4" />
@@ -161,12 +174,8 @@ const DailyCheckin = () => {
                 <CardDescription>How many glasses of water did you drink?</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-500">
-                      {checkinData.waterIntake[0]} glasses
-                    </div>
-                  </div>
+                <div className="space-y-4 text-center">
+                  <div className="text-2xl font-bold text-blue-500">{checkinData.waterIntake[0]} glasses</div>
                   <Slider
                     value={checkinData.waterIntake}
                     onValueChange={(value) => setCheckinData(prev => ({ ...prev, waterIntake: value }))}
@@ -185,12 +194,8 @@ const DailyCheckin = () => {
                 <CardDescription>How many hours did you sleep last night?</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-wellness">
-                      {checkinData.sleepHours[0]} hours
-                    </div>
-                  </div>
+                <div className="space-y-4 text-center">
+                  <div className="text-2xl font-bold text-wellness">{checkinData.sleepHours[0]} hours</div>
                   <Slider
                     value={checkinData.sleepHours}
                     onValueChange={(value) => setCheckinData(prev => ({ ...prev, sleepHours: value }))}

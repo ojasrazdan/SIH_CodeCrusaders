@@ -58,11 +58,11 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
-    /* Gradients for mental health design */
+    /* Gradients */
     --gradient-calm: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
     --gradient-wellness: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--wellness)));
     --gradient-soft: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
-    
+
     /* Shadows */
     --shadow-gentle: 0 4px 20px -4px hsl(var(--primary) / 0.1);
     --shadow-card: 0 2px 12px -2px hsl(var(--primary) / 0.08);
@@ -71,85 +71,52 @@ All colors MUST be HSL.
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-
-    --sidebar-background: 220 25% 96%;
-    --sidebar-foreground: 215 25% 15%;
-    --sidebar-primary: 210 75% 50%;
-    --sidebar-primary-foreground: 220 20% 99%;
-    --sidebar-accent: 220 20% 94%;
-    --sidebar-accent-foreground: 215 25% 15%;
-    --sidebar-border: 220 15% 88%;
-    --sidebar-ring: 210 75% 50%;
   }
 
   .dark {
+    /* Dark theme colors */
     --background: 215 25% 8%;
     --foreground: 220 20% 92%;
-
     --card: 215 25% 10%;
     --card-foreground: 220 20% 92%;
-
-    --popover: 215 25% 10%;
-    --popover-foreground: 220 20% 92%;
-
     --primary: 210 75% 60%;
     --primary-foreground: 215 25% 8%;
-    --primary-light: 210 75% 75%;
-    --primary-dark: 210 75% 45%;
-
     --secondary: 140 45% 50%;
     --secondary-foreground: 215 25% 8%;
-    --secondary-light: 140 45% 65%;
-    --secondary-dark: 140 45% 35%;
-
     --wellness: 280 45% 65%;
     --wellness-foreground: 215 25% 8%;
-    --wellness-light: 280 45% 80%;
-
-    --warning: 35 85% 60%;
-    --warning-foreground: 215 25% 8%;
-
-    --emergency: 0 70% 55%;
-    --emergency-foreground: 220 20% 92%;
-
-    --muted: 215 25% 15%;
-    --muted-foreground: 220 15% 65%;
-
-    --accent: 215 25% 15%;
-    --accent-foreground: 220 20% 92%;
-
-    --destructive: 0 70% 55%;
-    --destructive-foreground: 220 20% 92%;
-
-    --border: 215 25% 20%;
-    --input: 215 25% 15%;
-    --ring: 210 75% 60%;
-
-    --gradient-calm: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
-    --gradient-wellness: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--wellness)));
-    --gradient-soft: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
-    
-    --shadow-gentle: 0 4px 20px -4px hsl(0 0% 0% / 0.3);
-    --shadow-card: 0 2px 12px -2px hsl(0 0% 0% / 0.2);
-    --shadow-wellness: 0 8px 32px -8px hsl(var(--wellness) / 0.3);
-
-    --sidebar-background: 215 25% 10%;
-    --sidebar-foreground: 220 20% 92%;
-    --sidebar-primary: 210 75% 60%;
-    --sidebar-primary-foreground: 215 25% 8%;
-    --sidebar-accent: 215 25% 15%;
-    --sidebar-accent-foreground: 220 20% 92%;
-    --sidebar-border: 215 25% 20%;
-    --sidebar-ring: 210 75% 60%;
   }
-}
 
-@layer base {
+  /* Base styling */
   * {
     @apply border-border;
   }
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Accessibility Features */
+
+  /* High Contrast Mode */
+  .high-contrast {
+    @apply bg-black text-white;
+  }
+
+  .high-contrast a {
+    @apply text-cyan-400;
+  }
+
+  .high-contrast button {
+    @apply bg-white text-black;
+  }
+
+  /* ADHD-Friendly Mode */
+  .adhd-mode {
+    @apply text-lg leading-loose tracking-wide;
+  }
+
+  .adhd-mode * {
+    @apply motion-safe:transition-none;
   }
 }

@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Bell, Moon, Sun, Volume2, VolumeX, Globe, Lock, Trash2 } from "lucide-react";
+import { Bell, Moon, Sun, Volume2, Globe, Lock, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAccessibility } from "../hooks/AccessibilityContext"; // ✅ Accessibility Context
 
 const Settings = () => {
   const [notifications, setNotifications] = useState(true);
@@ -13,12 +14,22 @@ const Settings = () => {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [dataCollection, setDataCollection] = useState(true);
   const { toast } = useToast();
+  const { ttsEnabled } = useAccessibility();
+
+  const speakText = (text: string) => {
+    if (ttsEnabled && "speechSynthesis" in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    }
+  };
 
   const handleSaveSettings = () => {
     toast({
       title: "Settings Saved",
       description: "Your preferences have been updated successfully.",
     });
+    speakText("Settings saved successfully");
   };
 
   const handleExportData = () => {
@@ -26,6 +37,7 @@ const Settings = () => {
       title: "Data Export",
       description: "Your data export will be sent to your email shortly.",
     });
+    speakText("Your data export will be sent to your email shortly");
   };
 
   const handleDeleteAccount = () => {
@@ -34,6 +46,7 @@ const Settings = () => {
       description: "Please contact support to delete your account.",
       variant: "destructive",
     });
+    speakText("Please contact support to delete your account");
   };
 
   return (
@@ -69,7 +82,11 @@ const Settings = () => {
                 <Switch
                   id="push-notifications"
                   checked={notifications}
-                  onCheckedChange={setNotifications}
+                  onCheckedChange={(val) => {
+                    setNotifications(val);
+                    speakText(`Push notifications ${val ? "enabled" : "disabled"}`);
+                  }}
+                  aria-label="Toggle push notifications"
                 />
               </div>
               <Separator />
@@ -83,7 +100,11 @@ const Settings = () => {
                 <Switch
                   id="sound"
                   checked={soundEnabled}
-                  onCheckedChange={setSoundEnabled}
+                  onCheckedChange={(val) => {
+                    setSoundEnabled(val);
+                    speakText(`Sound effects ${val ? "enabled" : "disabled"}`);
+                  }}
+                  aria-label="Toggle sound effects"
                 />
               </div>
             </CardContent>
@@ -111,7 +132,11 @@ const Settings = () => {
                 <Switch
                   id="dark-mode"
                   checked={darkMode}
-                  onCheckedChange={setDarkMode}
+                  onCheckedChange={(val) => {
+                    setDarkMode(val);
+                    speakText(`Dark mode ${val ? "enabled" : "disabled"}`);
+                  }}
+                  aria-label="Toggle dark mode"
                 />
               </div>
             </CardContent>
@@ -139,7 +164,11 @@ const Settings = () => {
                 <Switch
                   id="data-collection"
                   checked={dataCollection}
-                  onCheckedChange={setDataCollection}
+                  onCheckedChange={(val) => {
+                    setDataCollection(val);
+                    speakText(`Data collection ${val ? "enabled" : "disabled"}`);
+                  }}
+                  aria-label="Toggle analytics data collection"
                 />
               </div>
               <Separator />
@@ -148,6 +177,7 @@ const Settings = () => {
                   variant="outline"
                   onClick={handleExportData}
                   className="w-full justify-start"
+                  aria-label="Export my data"
                 >
                   <Globe className="h-4 w-4 mr-2" />
                   Export My Data
@@ -156,6 +186,7 @@ const Settings = () => {
                   variant="destructive"
                   onClick={handleDeleteAccount}
                   className="w-full justify-start"
+                  aria-label="Delete my account"
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
                   Delete Account
@@ -169,6 +200,7 @@ const Settings = () => {
             <Button
               onClick={handleSaveSettings}
               className="bg-primary hover:bg-primary-dark"
+              aria-label="Save settings"
             >
               Save Settings
             </Button>

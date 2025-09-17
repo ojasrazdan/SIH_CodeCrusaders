@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Play, Pause, RotateCcw, Heart, Brain, Leaf } from "lucide-react";
+import { useAccessibility } from "../hooks/AccessibilityContext"; // ✅ accessibility context
 
 const ARTICLES = [
   {
@@ -86,6 +87,16 @@ const Resources = () => {
   const [exerciseTime, setExerciseTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  
+  const { ttsEnabled } = useAccessibility();
+
+  const speakText = (text: string) => {
+    if (ttsEnabled && "speechSynthesis" in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    }
+  };
 
   const getCategoryIcon = (category: string) => {
     switch (category.toLowerCase()) {
@@ -113,7 +124,7 @@ const Resources = () => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Timer functionality with useEffect
+  // Timer logic
   useEffect(() => {
     if (isPlaying && activeExercise !== null) {
       intervalRef.current = setInterval(() => {
@@ -122,22 +133,19 @@ const Resources = () => {
           if (exercise && prev >= exercise.duration) {
             setIsPlaying(false);
             setActiveExercise(null);
+            speakText("Exercise completed");
             return 0;
           }
           return prev + 1;
         });
       }, 1000);
-    } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+    } else if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
 
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [isPlaying, activeExercise]);
 
@@ -145,18 +153,23 @@ const Resources = () => {
     setActiveExercise(exerciseId);
     setIsPlaying(true);
     setExerciseTime(0);
+    const exercise = BREATHING_EXERCISES.find(ex => ex.id === exerciseId);
+    if (exercise) speakText(`Starting ${exercise.name}`);
   };
 
   const pauseExercise = () => {
     setIsPlaying(false);
+    speakText("Exercise paused");
   };
 
   const resetExercise = () => {
     setIsPlaying(false);
     setExerciseTime(0);
     setActiveExercise(null);
+    speakText("Exercise reset");
   };
 
+  // Render selected article
   if (selectedArticle) {
     const article = ARTICLES.find(a => a.id === selectedArticle);
     if (!article) return null;
@@ -205,6 +218,7 @@ const Resources = () => {
     );
   }
 
+  // Main resources page
   return (
     <div className="min-h-screen bg-gradient-soft p-4">
       <div className="container mx-auto max-w-6xl">
@@ -221,11 +235,18 @@ const Resources = () => {
             <TabsTrigger value="exercises">Breathing Exercises</TabsTrigger>
           </TabsList>
 
+          {/* Articles */}
           <TabsContent value="articles">
             <div className="grid md:grid-cols-2 gap-6">
-              {ARTICLES.map((article) => (
-                <Card key={article.id} className="shadow-card hover:shadow-wellness transition-smooth cursor-pointer"
-                      onClick={() => setSelectedArticle(article.id)}>
+              {ARTICLES.map(article => (
+                <Card
+                  key={article.id}
+                  className="shadow-card hover:shadow-wellness transition-smooth cursor-pointer"
+                  onClick={() => {
+                    setSelectedArticle(article.id);
+                    speakText(`Opening article ${article.title}`);
+                  }}
+                >
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg">{article.title}</CardTitle>
@@ -239,9 +260,7 @@ const Resources = () => {
                   <CardContent>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">{article.readTime}</span>
-                      <Button variant="outline" size="sm">
-                        Read Article
-                      </Button>
+                      <Button variant="outline" size="sm">Read Article</Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -249,9 +268,10 @@ const Resources = () => {
             </div>
           </TabsContent>
 
+          {/* Breathing Exercises */}
           <TabsContent value="exercises">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {BREATHING_EXERCISES.map((exercise) => (
+              {BREATHING_EXERCISES.map(exercise => (
                 <Card key={exercise.id} className="shadow-card">
                   <CardHeader>
                     <CardTitle className="text-lg">{exercise.name}</CardTitle>
@@ -280,15 +300,12 @@ const Resources = () => {
                             <Button
                               size="sm"
                               variant={isPlaying ? "default" : "outline"}
-                              onClick={isPlaying ? pauseExercise : () => setIsPlaying(true)}
+                              onClick={isPlaying ? pauseExercise : () => { setIsPlaying(true); speakText("Exercise resumed"); }}
+                              aria-label={isPlaying ? "Pause exercise" : "Resume exercise"}
                             >
                               {isPlaying ? <Pause size={16} /> : <Play size={16} />}
                             </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={resetExercise}
-                            >
+                            <Button size="sm" variant="outline" onClick={resetExercise} aria-label="Reset exercise">
                               <RotateCcw size={16} />
                             </Button>
                           </>
@@ -297,6 +314,7 @@ const Resources = () => {
                             size="sm"
                             onClick={() => startExercise(exercise.id)}
                             className="bg-secondary hover:bg-secondary-dark"
+                            aria-label={`Start ${exercise.name}`}
                           >
                             <Play size={16} className="mr-2" />
                             Start
@@ -307,9 +325,9 @@ const Resources = () => {
                       <div className="space-y-2">
                         <h4 className="font-medium">Instructions:</h4>
                         <ul className="text-sm space-y-1">
-                          {exercise.instructions.map((instruction, index) => (
-                            <li key={index} className="flex items-start">
-                              <span className="text-primary mr-2">{index + 1}.</span>
+                          {exercise.instructions.map((instruction, idx) => (
+                            <li key={idx} className="flex items-start">
+                              <span className="text-primary mr-2">{idx + 1}.</span>
                               {instruction}
                             </li>
                           ))}

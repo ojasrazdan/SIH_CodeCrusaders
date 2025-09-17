@@ -1,47 +1,52 @@
-import { cn } from "@/lib/utils";
-import Navigation from "./navigation";
-import { Button } from "./button";
-import { Settings, User } from "lucide-react";
+import React from "react";
 import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { useAccessibility } from "@/hooks/AccessibilityContext";
+import { Button } from "@/components/ui/button";
+import Navigation from "./navigation";
+import { Settings, User } from "lucide-react";
 
 interface HeaderProps {
   className?: string;
 }
 
 const Header = ({ className }: HeaderProps) => {
+  const { isAccessibleMode, toggleAccessibility } = useAccessibility();
+
   return (
-    <header className={cn(
-      "sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-sm",
-      className
-    )}>
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <h1 className="text-xl font-bold bg-gradient-calm bg-clip-text text-transparent">
-            MindCare
-          </h1>
-          <Navigation className="hidden md:flex" />
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          <Button variant="ghost" size="sm" className="rounded-lg" asChild>
-            <Link to="/settings">
-              <Settings size={16} className="mr-2" />
-              <span className="hidden sm:inline">Settings</span>
-            </Link>
+    <header
+      className={cn(
+        "sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md",
+        className
+      )}
+    >
+      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+        {/* Logo / Home link */}
+        <Link to="/" className="text-xl font-bold">
+          MyApp
+        </Link>
+
+        {/* Navigation links */}
+        <Navigation />
+
+        {/* Action buttons */}
+        <div className="flex items-center gap-4">
+          {/* Accessibility toggle */}
+          <Button
+            size="sm"
+            variant={isAccessibleMode ? "default" : "outline"}
+            onClick={toggleAccessibility}
+          >
+            {isAccessibleMode ? "Accessibility ON" : "Accessibility OFF"}
           </Button>
-          <Button variant="outline" size="sm" className="rounded-lg" asChild>
-            <Link to="/profile">
-              <User size={16} className="mr-2" />
-              <span className="hidden sm:inline">Profile</span>
-            </Link>
-          </Button>
-        </div>
-      </div>
-      
-      {/* Mobile Navigation */}
-      <div className="md:hidden border-t border-border bg-background/95 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-2">
-          <Navigation className="justify-center" />
+
+          {/* Profile and Settings */}
+          <Link to="/profile" aria-label="Profile">
+            <User className="h-5 w-5" />
+          </Link>
+          <Link to="/settings" aria-label="Settings">
+            <Settings className="h-5 w-5" />
+          </Link>
         </div>
       </div>
     </header>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,8 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, User, Mail, Phone, MapPin, GraduationCap, Heart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAccessibility } from "@/hooks/AccessibilityContext";
 
 const Profile = () => {
+  const { ttsEnabled, speakText, highContrast, adhdMode } = useAccessibility();
   const [profile, setProfile] = useState({
     firstName: "Alex",
     lastName: "Johnson",
@@ -35,6 +37,7 @@ const Profile = () => {
       title: "Profile Updated",
       description: "Your profile information has been saved successfully.",
     });
+    if (ttsEnabled && speakText) speakText("Profile updated successfully");
   };
 
   const recentActivity = [
@@ -44,7 +47,11 @@ const Profile = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-soft p-4">
+    <div
+      className={`min-h-screen p-4 ${
+        highContrast ? "bg-black text-white" : "bg-gradient-soft"
+      } ${adhdMode ? "text-lg font-sans" : ""}`}
+    >
       <div className="container mx-auto max-w-6xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">My Profile</h1>

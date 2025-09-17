@@ -1,8 +1,9 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Brain, Heart, FileText, Calendar, AlertTriangle, Shield, Users, CheckCircle } from "lucide-react";
+import { Brain, Heart, FileText, Calendar, AlertTriangle, Shield, Users, CheckCircle, Accessibility } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAccessibility } from "../hooks/AccessibilityContext";
 
 const FEATURES = [
   {
@@ -36,6 +37,14 @@ const FEATURES = [
     link: "/sos",
     color: "text-emergency",
     bgColor: "bg-emergency/10"
+  },
+  {
+    icon: Accessibility,
+    title: "Disability Check",
+    description: "Enable accessibility features like text-to-speech, ADHD-friendly UI, and more",
+    link: "/disability-check",
+    color: "text-green-600",
+    bgColor: "bg-green-100"
   }
 ];
 
@@ -47,8 +56,18 @@ const STATS = [
 ];
 
 const Index = () => {
+  const { ttsEnabled, speakText, highContrast, adhdMode } = useAccessibility();
+
+  const handleSpeak = (text: string) => {
+    if (ttsEnabled && speakText) speakText(text);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-soft">
+    <div
+      className={`min-h-screen ${
+        highContrast ? "bg-black text-white" : "bg-gradient-soft"
+      } ${adhdMode ? "text-lg font-sans" : ""}`}
+    >
       {/* Hero Section */}
       <section className="relative py-20 px-4">
         <div className="container mx-auto max-w-6xl text-center">
@@ -64,13 +83,24 @@ const Index = () => {
               Your digital companion for mental health and psychological support designed specifically for students in higher education
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-primary hover:bg-primary-dark shadow-gentle">
+              <Button
+                asChild
+                size="lg"
+                className="bg-primary hover:bg-primary-dark shadow-gentle"
+                onClick={() => handleSpeak("Navigating to Mental Health Assessment")}
+              >
                 <Link to="/assessment">
                   <Brain className="mr-2 h-5 w-5" />
                   Take Assessment
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="shadow-card">
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="shadow-card"
+                onClick={() => handleSpeak("Navigating to Support Resources")}
+              >
                 <Link to="/resources">
                   <FileText className="mr-2 h-5 w-5" />
                   Browse Resources
@@ -113,9 +143,14 @@ const Index = () => {
 
           <div className="grid md:grid-cols-2 gap-8">
             {FEATURES.map((feature) => (
-              <Card key={feature.title} className="shadow-card hover:shadow-wellness transition-smooth group">
+              <Card
+                key={feature.title}
+                className="shadow-card hover:shadow-wellness transition-smooth group"
+              >
                 <CardHeader>
-                  <div className={`w-12 h-12 rounded-lg ${feature.bgColor} flex items-center justify-center mb-4`}>
+                  <div
+                    className={`w-12 h-12 rounded-lg ${feature.bgColor} flex items-center justify-center mb-4`}
+                  >
                     <feature.icon className={`h-6 w-6 ${feature.color}`} />
                   </div>
                   <CardTitle className="text-xl mb-2">{feature.title}</CardTitle>
@@ -124,7 +159,12 @@ const Index = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button asChild variant="outline" className="group-hover:bg-primary group-hover:text-primary-foreground transition-smooth">
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="group-hover:bg-primary group-hover:text-primary-foreground transition-smooth"
+                    onClick={() => handleSpeak(`Navigating to ${feature.title}`)}
+                  >
                     <Link to={feature.link}>
                       Get Started
                     </Link>
@@ -195,13 +235,24 @@ const Index = () => {
             Join thousands of students who are taking control of their mental wellbeing with evidence-based tools and compassionate support.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="bg-gradient-wellness text-wellness-foreground hover:bg-wellness shadow-wellness">
+            <Button
+              asChild
+              size="lg"
+              className="bg-gradient-wellness text-wellness-foreground hover:bg-wellness shadow-wellness"
+              onClick={() => handleSpeak("Starting Daily Check-in")}
+            >
               <Link to="/daily-checkin">
                 <Calendar className="mr-2 h-5 w-5" />
                 Start Daily Check-in
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="shadow-card">
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="shadow-card"
+              onClick={() => handleSpeak("Accessing Emergency Support")}
+            >
               <Link to="/sos">
                 <AlertTriangle className="mr-2 h-5 w-5" />
                 Access Emergency Support

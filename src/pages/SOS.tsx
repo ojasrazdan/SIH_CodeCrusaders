@@ -2,60 +2,33 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, Phone, MessageCircle, Mail, Clock, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAccessibility } from "@/hooks/AccessibilityContext";
 
+// ✅ Define crisis and campus resources
 const CRISIS_RESOURCES = [
-  {
-    name: "National Suicide Prevention Lifeline",
-    number: "988",
-    description: "24/7 crisis support",
-    type: "call"
-  },
-  {
-    name: "Crisis Text Line",
-    number: "Text HOME to 741741",
-    description: "24/7 text support",
-    type: "text"
-  },
-  {
-    name: "Campus Emergency",
-    number: "(555) 123-HELP",
-    description: "Campus security & counseling",
-    type: "call"
-  },
-  {
-    name: "Emergency Services",
-    number: "911",
-    description: "Medical emergency",
-    type: "emergency"
-  }
+  { name: "National Suicide Prevention Lifeline", number: "988", description: "24/7 crisis support", type: "call" },
+  { name: "Crisis Text Line", number: "Text HOME to 741741", description: "24/7 text support", type: "text" },
+  { name: "Campus Emergency", number: "(555) 123-HELP", description: "Campus security & counseling", type: "call" },
+  { name: "Emergency Services", number: "911", description: "Medical emergency", type: "emergency" }
 ];
 
 const CAMPUS_RESOURCES = [
-  {
-    name: "Counseling & Psychological Services",
-    hours: "Mon-Fri: 8AM-5PM",
-    phone: "(555) 123-4567",
-    email: "counseling@university.edu",
-    location: "Student Health Center, Room 200"
-  },
-  {
-    name: "Dean of Students Office",
-    hours: "Mon-Fri: 9AM-4PM", 
-    phone: "(555) 123-4568",
-    email: "deanofstudents@university.edu",
-    location: "Administration Building, Room 150"
-  },
-  {
-    name: "Campus Health Services",
-    hours: "24/7 Emergency, Mon-Fri: 8AM-6PM Regular",
-    phone: "(555) 123-4569",
-    email: "health@university.edu",
-    location: "Student Health Center"
-  }
+  { name: "Counseling & Psychological Services", hours: "Mon-Fri: 8AM-5PM", phone: "(555) 123-4567", email: "counseling@university.edu", location: "Student Health Center, Room 200" },
+  { name: "Dean of Students Office", hours: "Mon-Fri: 9AM-4PM", phone: "(555) 123-4568", email: "deanofstudents@university.edu", location: "Administration Building, Room 150" },
+  { name: "Campus Health Services", hours: "24/7 Emergency, Mon-Fri: 8AM-6PM Regular", phone: "(555) 123-4569", email: "health@university.edu", location: "Student Health Center" }
 ];
 
 const SOS = () => {
   const { toast } = useToast();
+  const { isAccessibleMode } = useAccessibility(); // ✅ Use your existing accessibility toggle
+
+  const speakText = (text: string) => {
+    if (isAccessibleMode && "speechSynthesis" in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    }
+  };
 
   const handleEmergencyCall = (number: string, name: string) => {
     toast({
@@ -63,7 +36,7 @@ const SOS = () => {
       description: `Calling ${number}... Stay on the line, help is coming.`,
       variant: "destructive",
     });
-    // In a real app, this would initiate a call
+    speakText(`Connecting to ${name}, calling ${number}`);
     window.open(`tel:${number.replace(/[^0-9]/g, '')}`);
   };
 
@@ -72,7 +45,7 @@ const SOS = () => {
       title: "Opening Text Message",
       description: "Text HOME to 741741 for immediate support",
     });
-    // In a real app, this would open SMS
+    speakText("Opening text message: Text HOME to 741741 for immediate support");
     window.open("sms:741741?body=HOME");
   };
 
@@ -82,12 +55,13 @@ const SOS = () => {
       description: "Your emergency contact has been sent your location and a request for help.",
       variant: "destructive",
     });
-    // In a real app, this would send notifications to emergency contacts
+    speakText("Emergency contact has been notified with your location");
   };
 
   return (
     <div className="min-h-screen bg-gradient-soft p-4">
       <div className="container mx-auto max-w-4xl">
+        {/* Header */}
         <div className="text-center mb-8">
           <AlertTriangle className="mx-auto h-16 w-16 text-emergency mb-4" />
           <h1 className="text-3xl font-bold text-emergency mb-2">Emergency Support</h1>
@@ -117,12 +91,10 @@ const SOS = () => {
                     <Button
                       className="w-full bg-emergency hover:bg-emergency/90 text-emergency-foreground"
                       onClick={() => {
-                        if (resource.type === "text") {
-                          handleEmergencyText();
-                        } else {
-                          handleEmergencyCall(resource.number, resource.name);
-                        }
+                        if (resource.type === "text") handleEmergencyText();
+                        else handleEmergencyCall(resource.number, resource.name);
                       }}
+                      aria-label={`Contact ${resource.name} via ${resource.type}`}
                     >
                       {resource.type === "text" ? (
                         <MessageCircle className="mr-2 h-4 w-4" />
@@ -154,6 +126,7 @@ const SOS = () => {
               onClick={notifyEmergencyContact}
               className="w-full bg-warning hover:bg-warning/90 text-warning-foreground"
               size="lg"
+              aria-label="Send emergency alert to your contact"
             >
               <AlertTriangle className="mr-2 h-5 w-5" />
               Send Emergency Alert
