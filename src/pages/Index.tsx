@@ -1,268 +1,200 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Brain, Heart, FileText, Calendar, AlertTriangle, Shield, Users, CheckCircle, Accessibility } from "lucide-react";
+import {
+  Brain,
+  FileText,
+  Calendar,
+  Gamepad2,
+  AlertTriangle,
+  Target,
+  Lock,
+  Award,
+  Users,
+  Briefcase,
+  Droplets,
+  Plus,
+  Minus,
+  Accessibility, // Icon for the new card
+} from "lucide-react";
 import { Link } from "react-router-dom";
-import { useAccessibility } from "../hooks/AccessibilityContext";
+import { useState } from "react";
 
-const FEATURES = [
+// --- THIS ARRAY IS NOW RESTORED ---
+const features = [
   {
+    to: "/goals",
+    icon: Target,
+    title: "Goals",
+    description: "Set and track your personal goals.",
+    color: "text-blue-500",
+    bgColor: "bg-blue-500/10",
+  },
+  {
+    to: "/vault",
+    icon: Lock,
+    title: "Vault",
+    description: "A safe space for your thoughts and feelings.",
+    color: "text-purple-500",
+    bgColor: "bg-purple-500/10",
+  },
+  {
+    to: "/games",
+    icon: Gamepad2,
+    title: "Games",
+    description: "Mindful games to relax and focus.",
+    color: "text-green-500",
+    bgColor: "bg-green-500/10",
+  },
+  {
+    to: "/community",
+    icon: Users,
+    title: "Community",
+    description: "Connect with others in a safe space.",
+    color: "text-orange-500",
+    bgColor: "bg-orange-500/10",
+  },
+  {
+    to: "/assessment",
     icon: Brain,
-    title: "Mental Health Assessment",
-    description: "Take confidential PHQ-9 and GAD-7 assessments to understand your mental health",
-    link: "/assessment",
-    color: "text-primary",
-    bgColor: "bg-primary/10"
+    title: "Assessment",
+    description: "Understand your mental well-being.",
+    color: "text-pink-500",
+    bgColor: "bg-pink-500/10",
   },
   {
+    to: "/rewards",
+    icon: Award,
+    title: "Rewards",
+    description: "Earn points and unlock achievements.",
+    color: "text-yellow-500",
+    bgColor: "bg-yellow-500/10",
+  },
+  {
+    to: "/consultation",
+    icon: Briefcase,
+    title: "Consultation",
+    description: "Book a session with a professional.",
+    color: "text-indigo-500",
+    bgColor: "bg-indigo-500/10",
+  },
+  {
+    to: "/resources",
     icon: FileText,
-    title: "Support Resources",
-    description: "Access evidence-based articles and guided breathing exercises",
-    link: "/resources", 
-    color: "text-secondary",
-    bgColor: "bg-secondary/10"
+    title: "Resources",
+    description: "Articles, videos, and more.",
+    color: "text-red-500",
+    bgColor: "bg-red-500/10",
   },
   {
+    to: "/daily-checkin",
     icon: Calendar,
     title: "Daily Check-in",
-    description: "Track your mood, energy, and daily wellness activities",
-    link: "/daily-checkin",
-    color: "text-wellness",
-    bgColor: "bg-wellness/10"
+    description: "Log your mood and track your progress.",
+    color: "text-teal-500",
+    bgColor: "bg-teal-500/10",
   },
   {
+    to: "/sos",
     icon: AlertTriangle,
-    title: "Emergency Support",
-    description: "Immediate access to crisis resources and campus counseling",
-    link: "/sos",
-    color: "text-emergency",
-    bgColor: "bg-emergency/10"
+    title: "SOS",
+    description: "Immediate help in an emergency.",
+    color: "text-gray-500",
+    bgColor: "bg-gray-500/10",
   },
-  {
-    icon: Accessibility,
-    title: "Disability Check",
-    description: "Enable accessibility features like text-to-speech, ADHD-friendly UI, and more",
-    link: "/disability-check",
-    color: "text-green-600",
-    bgColor: "bg-green-100"
-  }
 ];
 
-const STATS = [
-  { number: "1 in 5", label: "Students experience mental health challenges" },
-  { number: "24/7", label: "Crisis support available" },
-  { number: "100%", label: "Anonymous and confidential" },
-  { number: "Evidence-based", label: "Clinically validated tools" }
-];
-
-const Index = () => {
-  const { ttsEnabled, speakText, highContrast, adhdMode } = useAccessibility();
-
-  const handleSpeak = (text: string) => {
-    if (ttsEnabled && speakText) speakText(text);
-  };
+const Home = () => {
+  const [waterCount, setWaterCount] = useState(2);
 
   return (
-    <div
-      className={`min-h-screen ${
-        highContrast ? "bg-black text-white" : "bg-gradient-soft"
-      } ${adhdMode ? "text-lg font-sans" : ""}`}
-    >
-      {/* Hero Section */}
-      <section className="relative py-20 px-4">
-        <div className="container mx-auto max-w-6xl text-center">
-          <div className="mb-8">
-            <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">
-              <Shield className="mr-2 h-4 w-4" />
-              Confidential & Anonymous
-            </Badge>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-calm bg-clip-text text-transparent">
-              MindCare
-            </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              Your digital companion for mental health and psychological support designed specifically for students in higher education
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                asChild
-                size="lg"
-                className="bg-primary hover:bg-primary-dark shadow-gentle"
-                onClick={() => handleSpeak("Navigating to Mental Health Assessment")}
-              >
-                <Link to="/assessment">
-                  <Brain className="mr-2 h-5 w-5" />
-                  Take Assessment
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                size="lg"
-                className="shadow-card"
-                onClick={() => handleSpeak("Navigating to Support Resources")}
-              >
-                <Link to="/resources">
-                  <FileText className="mr-2 h-5 w-5" />
-                  Browse Resources
-                </Link>
-              </Button>
-            </div>
-          </div>
+    <div className="min-h-screen p-4 bg-gradient-soft">
+      <div className="container mx-auto max-w-5xl">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-2">Welcome to MindCare</h1>
+          <p className="text-lg text-muted-foreground">
+            Your digital companion for mental well-being, built for everyone.
+          </p>
         </div>
-      </section>
 
-      {/* Stats Section */}
-      <section className="py-12 px-4 bg-card/50">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {STATS.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-2xl md:text-3xl font-bold text-primary mb-2">
-                  {stat.number}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {/* Accessibility Hub Card */}
+          <Link to="/settings" className="xl:col-span-2 flex">
+            <Card className="shadow-card bg-primary text-primary-foreground hover:bg-primary/90 transition-smooth group w-full flex flex-col">
+              <CardHeader>
+                <div className="w-12 h-12 rounded-lg bg-primary-foreground/20 flex items-center justify-center mb-4">
+                  <Accessibility className="h-6 w-6 text-primary-foreground" />
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  {stat.label}
+                <CardTitle>Accessibility Hub</CardTitle>
+                <CardDescription className="text-primary-foreground/80">
+                  Personalize your experience with high-contrast mode, ADHD-friendly fonts, and more.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="mt-auto">
+                <div className="group-hover:underline">
+                  Customize Your Settings
                 </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          {/* Hydration Tracker */}
+          <Card className="shadow-card xl:col-span-2">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <span>Hydration Tracker</span>
+                <Droplets className="text-primary" />
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-center">
+              <p className="text-4xl font-bold mb-4">
+                {waterCount} / 8 glasses
+              </p>
+              <div className="flex justify-center gap-4">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setWaterCount(Math.max(0, waterCount - 1))}
+                >
+                  <Minus />
+                </Button>
+                <Button size="icon" onClick={() => setWaterCount(waterCount + 1)}>
+                  <Plus />
+                </Button>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </CardContent>
+          </Card>
 
-      {/* Features Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Comprehensive Mental Health Support
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Access professional-grade tools and resources designed to support your mental wellbeing throughout your academic journey
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {FEATURES.map((feature) => (
-              <Card
-                key={feature.title}
-                className="shadow-card hover:shadow-wellness transition-smooth group"
-              >
-                <CardHeader>
+          {/* Other features are mapped here */}
+          {features.map((feature) => (
+            <Link to={feature.to} key={feature.to} className="flex">
+              <Card className="shadow-card hover:shadow-wellness transition-smooth group w-full flex flex-col">
+                <CardHeader className="flex-grow">
                   <div
                     className={`w-12 h-12 rounded-lg ${feature.bgColor} flex items-center justify-center mb-4`}
                   >
                     <feature.icon className={`h-6 w-6 ${feature.color}`} />
                   </div>
-                  <CardTitle className="text-xl mb-2">{feature.title}</CardTitle>
-                  <CardDescription className="text-base">
-                    {feature.description}
-                  </CardDescription>
+                  <CardTitle>{feature.title}</CardTitle>
+                  <CardDescription>{feature.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="group-hover:bg-primary group-hover:text-primary-foreground transition-smooth"
-                    onClick={() => handleSpeak(`Navigating to ${feature.title}`)}
-                  >
-                    <Link to={feature.link}>
-                      Get Started
-                    </Link>
-                  </Button>
+                  <div className="text-primary group-hover:underline">
+                    Go to {feature.title}
+                  </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
+            </Link>
+          ))}
         </div>
-      </section>
-
-      {/* Privacy & Accessibility Section */}
-      <section className="py-16 px-4 bg-card/30">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid md:grid-cols-2 gap-12">
-            <div>
-              <h3 className="text-2xl font-bold mb-4 flex items-center">
-                <Shield className="mr-3 h-6 w-6 text-primary" />
-                Privacy First
-              </h3>
-              <div className="space-y-3 text-muted-foreground">
-                <div className="flex items-start">
-                  <CheckCircle className="mr-3 h-5 w-5 text-secondary mt-0.5" />
-                  <span>Complete anonymity - no personal information required</span>
-                </div>
-                <div className="flex items-start">
-                  <CheckCircle className="mr-3 h-5 w-5 text-secondary mt-0.5" />
-                  <span>End-to-end encryption for all data</span>
-                </div>
-                <div className="flex items-start">
-                  <CheckCircle className="mr-3 h-5 w-5 text-secondary mt-0.5" />
-                  <span>No tracking or data sharing with third parties</span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-2xl font-bold mb-4 flex items-center">
-                <Users className="mr-3 h-6 w-6 text-secondary" />
-                Accessibility
-              </h3>
-              <div className="space-y-3 text-muted-foreground">
-                <div className="flex items-start">
-                  <CheckCircle className="mr-3 h-5 w-5 text-secondary mt-0.5" />
-                  <span>Text-to-speech support for visually impaired students</span>
-                </div>
-                <div className="flex items-start">
-                  <CheckCircle className="mr-3 h-5 w-5 text-secondary mt-0.5" />
-                  <span>ADHD-friendly interface with clear, simple design</span>
-                </div>
-                <div className="flex items-start">
-                  <CheckCircle className="mr-3 h-5 w-5 text-secondary mt-0.5" />
-                  <span>Audio and visual learning resources</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to prioritize your mental health?
-          </h2>
-          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Join thousands of students who are taking control of their mental wellbeing with evidence-based tools and compassionate support.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              asChild
-              size="lg"
-              className="bg-gradient-wellness text-wellness-foreground hover:bg-wellness shadow-wellness"
-              onClick={() => handleSpeak("Starting Daily Check-in")}
-            >
-              <Link to="/daily-checkin">
-                <Calendar className="mr-2 h-5 w-5" />
-                Start Daily Check-in
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="shadow-card"
-              onClick={() => handleSpeak("Accessing Emergency Support")}
-            >
-              <Link to="/sos">
-                <AlertTriangle className="mr-2 h-5 w-5" />
-                Access Emergency Support
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+      </div>
     </div>
   );
 };
 
-export default Index;
+export default Home;

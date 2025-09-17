@@ -1,60 +1,50 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { useAccessibility } from "@/hooks/AccessibilityContext";
 import { Button } from "@/components/ui/button";
-import Navigation from "./navigation";
-import { Settings, User, Accessibility } from "lucide-react"; // you can use Accessibility icon or any icon you like
+import Navigation from "@/components/ui/navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Menu, Settings } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
-interface HeaderProps {
-  className?: string;
-}
-
-const Header = ({ className }: HeaderProps) => {
-  const { isAccessibleMode, toggleAccessibility } = useAccessibility();
+const Header = () => {
+  const isMobile = useIsMobile();
 
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md",
-        className
-      )}
-    >
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        {/* Logo / App name */}
-        <Link to="/" className="text-xl font-bold">
-          MyApp
-        </Link>
-
-        {/* Navigation menu */}
-        <Navigation />
-
-        {/* Right-side actions */}
-        <div className="flex items-center gap-4">
-          {/* Accessibility toggle */}
-          <Button
-            size="sm"
-            variant={isAccessibleMode ? "default" : "outline"}
-            onClick={toggleAccessibility}
-          >
-            {isAccessibleMode ? "Accessibility ON" : "Accessibility OFF"}
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center">
+        <div className="mr-4 flex items-center">
+          <Link to="/" className="mr-6 flex items-center space-x-2">
+            <span className="font-bold sm:inline-block">MindCare</span>
+          </Link>
+          {!isMobile && <Navigation />}
+        </div>
+        <div className="flex flex-1 items-center justify-end space-x-2">
+          {isMobile && (
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left">
+                <SheetHeader>
+                  <SheetTitle>Menu</SheetTitle>
+                </SheetHeader>
+                <Navigation />
+              </SheetContent>
+            </Sheet>
+          )}
+          <Button variant="ghost" size="icon" asChild>
+            <Link to="/settings">
+              <Settings />
+            </Link>
           </Button>
-
-          {/* DisabilityCheck page link */}
-          <Link
-            to="/disability-check"
-            className="flex items-center gap-1 text-primary hover:underline"
-          >
-            <Accessibility className="h-5 w-5" />
-            Check Accessibility
-          </Link>
-
-          {/* Profile & Settings */}
+          {/* --- THIS IS THE FIX --- */}
           <Link to="/profile">
-            <User className="h-5 w-5" />
-          </Link>
-          <Link to="/settings">
-            <Settings className="h-5 w-5" />
+            <Avatar>
+              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
           </Link>
         </div>
       </div>
