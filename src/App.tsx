@@ -24,6 +24,7 @@ import Vault from "@/pages/Vault";
 import Rewards from "@/pages/Rewards";
 import Community from "@/pages/Community";
 import Consultation from "@/pages/Consultation";
+import AdminDashboard from "@/pages/AdminDashboard"; // Import the new Admin Dashboard
 
 const App = () => {
   return (
@@ -31,6 +32,7 @@ const App = () => {
       <BrowserRouter>
         <Header />
         <Routes>
+          {/* User-facing routes */}
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/resources" element={<Resources />} />
@@ -45,6 +47,11 @@ const App = () => {
           <Route path="/rewards" element={<Rewards />} />
           <Route path="/community" element={<Community />} />
           <Route path="/consultation" element={<Consultation />} />
+          
+          {/* Admin route */}
+          <Route path="/admin" element={<AdminDashboard />} />
+
+          {/* Catch-all route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster position="top-right" />
