@@ -1,0 +1,155 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Mental Health Color Palette - Calming & Accessible */
+    --background: 220 30% 97%;
+    --foreground: 215 25% 15%;
+
+    --card: 220 20% 99%;
+    --card-foreground: 215 25% 15%;
+
+    --popover: 220 20% 99%;
+    --popover-foreground: 215 25% 15%;
+
+    /* Primary - Calming Blue */
+    --primary: 210 75% 50%;
+    --primary-foreground: 220 20% 99%;
+    --primary-light: 210 75% 65%;
+    --primary-dark: 210 75% 35%;
+
+    /* Secondary - Healing Green */
+    --secondary: 140 45% 55%;
+    --secondary-foreground: 220 20% 99%;
+    --secondary-light: 140 45% 70%;
+    --secondary-dark: 140 45% 40%;
+
+    /* Wellness Purple */
+    --wellness: 280 45% 60%;
+    --wellness-foreground: 220 20% 99%;
+    --wellness-light: 280 45% 75%;
+
+    /* Warning - Gentle Orange */
+    --warning: 35 85% 65%;
+    --warning-foreground: 215 25% 15%;
+
+    /* Emergency - Soft Red */
+    --emergency: 0 70% 60%;
+    --emergency-foreground: 220 20% 99%;
+
+    --muted: 220 20% 94%;
+    --muted-foreground: 215 15% 45%;
+
+    --accent: 140 35% 92%;
+    --accent-foreground: 215 25% 15%;
+
+    --destructive: 0 70% 60%;
+    --destructive-foreground: 220 20% 99%;
+
+    --border: 220 15% 88%;
+    --input: 220 15% 92%;
+    --ring: 210 75% 50%;
+
+    --radius: 0.75rem;
+
+    /* Gradients for mental health design */
+    --gradient-calm: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+    --gradient-wellness: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--wellness)));
+    --gradient-soft: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
+    
+    /* Shadows */
+    --shadow-gentle: 0 4px 20px -4px hsl(var(--primary) / 0.1);
+    --shadow-card: 0 2px 12px -2px hsl(var(--primary) / 0.08);
+    --shadow-wellness: 0 8px 32px -8px hsl(var(--wellness) / 0.2);
+
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --sidebar-background: 220 25% 96%;
+    --sidebar-foreground: 215 25% 15%;
+    --sidebar-primary: 210 75% 50%;
+    --sidebar-primary-foreground: 220 20% 99%;
+    --sidebar-accent: 220 20% 94%;
+    --sidebar-accent-foreground: 215 25% 15%;
+    --sidebar-border: 220 15% 88%;
+    --sidebar-ring: 210 75% 50%;
+  }
+
+  .dark {
+    --background: 215 25% 8%;
+    --foreground: 220 20% 92%;
+
+    --card: 215 25% 10%;
+    --card-foreground: 220 20% 92%;
+
+    --popover: 215 25% 10%;
+    --popover-foreground: 220 20% 92%;
+
+    --primary: 210 75% 60%;
+    --primary-foreground: 215 25% 8%;
+    --primary-light: 210 75% 75%;
+    --primary-dark: 210 75% 45%;
+
+    --secondary: 140 45% 50%;
+    --secondary-foreground: 215 25% 8%;
+    --secondary-light: 140 45% 65%;
+    --secondary-dark: 140 45% 35%;
+
+    --wellness: 280 45% 65%;
+    --wellness-foreground: 215 25% 8%;
+    --wellness-light: 280 45% 80%;
+
+    --warning: 35 85% 60%;
+    --warning-foreground: 215 25% 8%;
+
+    --emergency: 0 70% 55%;
+    --emergency-foreground: 220 20% 92%;
+
+    --muted: 215 25% 15%;
+    --muted-foreground: 220 15% 65%;
+
+    --accent: 215 25% 15%;
+    --accent-foreground: 220 20% 92%;
+
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 220 20% 92%;
+
+    --border: 215 25% 20%;
+    --input: 215 25% 15%;
+    --ring: 210 75% 60%;
+
+    --gradient-calm: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+    --gradient-wellness: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--wellness)));
+    --gradient-soft: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
+    
+    --shadow-gentle: 0 4px 20px -4px hsl(0 0% 0% / 0.3);
+    --shadow-card: 0 2px 12px -2px hsl(0 0% 0% / 0.2);
+    --shadow-wellness: 0 8px 32px -8px hsl(var(--wellness) / 0.3);
+
+    --sidebar-background: 215 25% 10%;
+    --sidebar-foreground: 220 20% 92%;
+    --sidebar-primary: 210 75% 60%;
+    --sidebar-primary-foreground: 215 25% 8%;
+    --sidebar-accent: 215 25% 15%;
+    --sidebar-accent-foreground: 220 20% 92%;
+    --sidebar-border: 215 25% 20%;
+    --sidebar-ring: 210 75% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
