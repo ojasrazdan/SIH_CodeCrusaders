@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { useAccessibility } from "@/hooks/AccessibilityContext";
 import { Button } from "@/components/ui/button";
 import Navigation from "./navigation";
-import { Settings, User } from "lucide-react";
+import { Settings, User, Accessibility } from "lucide-react"; // you can use Accessibility icon or any icon you like
 
 interface HeaderProps {
   className?: string;
@@ -21,15 +21,15 @@ const Header = ({ className }: HeaderProps) => {
       )}
     >
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        {/* Logo / Home link */}
+        {/* Logo / App name */}
         <Link to="/" className="text-xl font-bold">
           MyApp
         </Link>
 
-        {/* Navigation links */}
+        {/* Navigation menu */}
         <Navigation />
 
-        {/* Action buttons */}
+        {/* Right-side actions */}
         <div className="flex items-center gap-4">
           {/* Accessibility toggle */}
           <Button
@@ -40,11 +40,20 @@ const Header = ({ className }: HeaderProps) => {
             {isAccessibleMode ? "Accessibility ON" : "Accessibility OFF"}
           </Button>
 
-          {/* Profile and Settings */}
-          <Link to="/profile" aria-label="Profile">
+          {/* DisabilityCheck page link */}
+          <Link
+            to="/disability-check"
+            className="flex items-center gap-1 text-primary hover:underline"
+          >
+            <Accessibility className="h-5 w-5" />
+            Check Accessibility
+          </Link>
+
+          {/* Profile & Settings */}
+          <Link to="/profile">
             <User className="h-5 w-5" />
           </Link>
-          <Link to="/settings" aria-label="Settings">
+          <Link to="/settings">
             <Settings className="h-5 w-5" />
           </Link>
         </div>
